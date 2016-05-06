@@ -80,12 +80,12 @@ while delta>delta_max&&step<step_max
     dy_grid2=[dy_grid,dy_grid(ygrid_num)];
     dx_grid2=[dx_grid,dx_grid(ygrid_num)];
     %for upwind
-    for i=2:1:xgrid_num+1
-        for j=2:1:ygrid_num+1
-            Fe = rou*u(i,j);
-            Fw = rou*u(i-1,j);
-            Fn = rou*v(i,j);
-            Fs = rou*v(i,j-1);
+    for i=2:1:xgrid_num
+        for j=2:1:ygrid_num
+            Fe = rou*(u(i,j)+u(i+1,j))/2;
+            Fw = rou*(u(i-1,j)+u(i,j))/2;
+            Fn = rou*(v(i,j)+v(i,j+1))/2;
+            Fs = rou*(v(i,j-1)+v(i,j))/2;
             Dn = mu/dy_grid2(j);
             Ds = mu/dy_grid2(j-1);
             Pn = Fn/Dn;
@@ -115,9 +115,9 @@ while delta>delta_max&&step<step_max
         end
     end
     %at x=xgrid_num+1;
-%     for j =2:1:ygrid_num
-%         u(xgrid_num+1,j)=1;
-%     end
+    for j =2:1:ygrid_num
+        u(xgrid_num+1,j)=1;
+    end
     %at y=ygrid_num+1
 %     v(:,ygrid_num+1)=1;
 %     v(xgrid_num+1,:)=1;
