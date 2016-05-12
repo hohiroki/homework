@@ -67,7 +67,7 @@ step = 0;
 
 %pE&mE
 while delta>delta_max&&step<step_max
-    step = step+1
+    step = step+1;
     u0 = u;
     v0 = v;
     %boundary
@@ -86,6 +86,7 @@ while delta>delta_max&&step<step_max
             Fw = rou*(u(i-1,j)+u(i,j))/2;
             Fn = rou*(v(i,j)+v(i,j+1))/2;
             Fs = rou*(v(i,j-1)+v(i,j))/2;
+            
             Dn = mu/dy_grid2(j);
             Ds = mu/dy_grid2(j-1);
             Pn = Fn/Dn;
@@ -99,31 +100,32 @@ while delta>delta_max&&step<step_max
             dy = (dy_grid2(j)+dy_grid2(j-1))/2;
             
             
-            %aE = max([-Fe,0])*dy;
-            aE = 0;
-            %aW = max([Fw,0])*dy;
-            aW = Fw;
-            %aN = Dn*An*dx;
-            aN = 0; 
+            aE = max([-Fe,0])*dy;
+            aW = max([Fw,0])*dy;
+            aN = Dn*An*dx;
+            %aN = 0; 
             aS = Ds*Bs*dx;
             aP = aE+aW+aN+aS+(Fe-Fw)*dy+(Fn-Fs)*dx;
-            %u(i,j)=(aE*u(i+1,j)+aW*u(i-1,j)+aN*u(i,j+1)+aS*u(i,j-1))/aP;
-            u(i,j)=(aW*u(i-1,j)+aS*u(i,j-1))/aP;
+            u(i,j)=(aE*u(i+1,j)+aW*u(i-1,j)+aN*u(i,j+1)+aS*u(i,j-1))/aP;
+            %u(i,j)=(aW*u(i-1,j)+aS*u(i,j-1))/aP;
             
             %mE solve v:dy*(Fe-Fw)+dx*(Fn-Fs)=0;
             v(i,j) = v(i,j-1)-dy*(u(i,j)-u(i-1,j))/dx;
         end
     end
-    %at x=xgrid_num+1;
-    for j =2:1:ygrid_num
-        u(xgrid_num+1,j)=1;
-    end
+    %at x=xgrid_num+1;  
+    u(xgrid_num+1,:)=u(xgrid_num,:);
+    %v(xgrid_num+1,:) = v(xgrid_num,:);
     %at y=ygrid_num+1
+    for i = 2:1:xgrid_num+1
+        v(i,ygrid_num+1) = ((1-u(i,:)/U)*dy_grid2'-(1-u(i-1,:)/U)*dy_grid2')/dx_grid(i-1);
+    end
+    
 %     v(:,ygrid_num+1)=1;
 %     v(xgrid_num+1,:)=1;
     
       
-    delta = max(max(abs(u-u0)))/U+max(max(abs(v-v0)))/U;
+    delta = max(max(abs(u-u0)))/U+max(max(abs(v-v0)))/U
 end
 %
 if step==step_max
