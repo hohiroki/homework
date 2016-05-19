@@ -1,0 +1,45 @@
+// tetin file version 1.1
+// written by ICEM CFD - version 14.0 on Fri May 31 13:16:17 2013
+// written by ICEM CFD - version 14.0 on Fri May 31 14:03:07 2013
+
+set_triangulation_tolerance 0.001
+define_family GEOM color 16663866
+define_family SOLID color 3403389
+define_family W color 8336365
+define_family S color 8336365
+define_family E color 8336365
+define_family N color 8336365
+define_family CREATED_FACES color 11782707
+
+prescribed_point 0 0 0 family GEOM name pnt.00
+prescribed_point 0 1 0 family GEOM name pnt.01
+prescribed_point 1 1 0 family GEOM name pnt.02
+prescribed_point 1 0 0 family GEOM name pnt.03
+define_curve family N tetra_size 1e+010 name crv.00 vertex1 pnt.01 vertex2 pnt.02
+bspline
+2,2,0
+0,0,1,1
+0,1,0
+1,1,0
+define_curve family S tetra_size 1e+010 name crv.01 vertex1 pnt.00 vertex2 pnt.03
+bspline
+2,2,0
+0,0,1,1
+0,0,0
+1,0,0
+define_curve family W tetra_size 1e+010 name crv.02 vertex1 pnt.00 vertex2 pnt.01
+bspline
+2,2,0
+0,0,1,1
+0,0,0
+0,1,0
+define_curve family E tetra_size 1e+010 name crv.03 vertex1 pnt.03 vertex2 pnt.02
+bspline
+2,2,0
+0,0,1,1
+1,0,0
+1,1,0
+affix 0
+define_model 0.050000001 reference_size 1
+define_prism_meshing_parameters law 0 nlay 3 hratio 1.2
+return

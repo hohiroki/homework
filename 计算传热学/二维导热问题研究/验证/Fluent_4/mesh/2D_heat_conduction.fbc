@@ -1,0 +1,24 @@
+# family_boco file written by ICEM CFD by zhangmk on Fri May 31 14:03:07 涓�?鍥芥爣鍑嗘��闂´ 2013
+## solver Fluent_V6
+"GEOM"
+"GEOM" "color" 16663900
+"SOLID"
+"SOLID" "color" 3403390
+"W"
+#ARGS noname
+"W" "WALL" 0
+"W" "color" 16663900
+"S"
+#ARGS noname
+"S" "WALL" 0
+"S" "color" 16663900
+"E"
+#ARGS noname
+"E" "WALL" 0
+"E" "color" 16663900
+"N"
+#ARGS noname
+"N" "WALL" 0
+"N" "color" 16663900
+"CREATED_FACES"
+

@@ -1,0 +1,40 @@
+      SUBROUTINE ZERO
+	INCLUDE 'HEAD'
+	DO 10 J=1,NJ
+	DO 10 I=1,NI
+	U(I,J)=0.0
+	V(I,J)=0.0
+	TE(I,J)=0.0
+	ED(I,J)=0.0
+	CPT(I,J)=(0.167*300+1173.0)*300.0
+	T(I,J)=300.0
+	YCH4(I,J)=0.0
+	YO2(I,J)=0.23*1.0
+	YN2(I,J)=0.77*1.0
+	YCO2(I,J)=0.0
+	YH2O(I,J)=0.0
+	C(I,J)=0.0 
+	P(I,J)=0.0
+	PP(I,J)=0.0
+      DEN(I,J)=DENSIT
+	VIS(I,J)=VISCOS
+	VSLL(I,J)=VISCOS
+	DDU(I,J)=0.0
+	DDV(I,J)=0.0
+	SU(I,J)=0.0
+	SP(I,J)=0.0
+	AS(I,J)=0.0
+	AN(I,J)=0.0
+	AW(I,J)=0.0
+	AE(I,J)=0.0
+	AP(I,J)=0.0
+10    CONTINUE
+      do 20 i=1,ni
+	do 20 j=1,nj
+	XM=YCH4(I,J)/XMCH4+YO2(I,J)/XMO2+YCO2(I,J)/XMCO2+
+     1   YH2O(I,J)/XMH2O+YN2(I,J)/XMN2
+	DEN(I,J)=1.01325E5/(8314.6*T(I,J)*XM)       
+20    CONTINUE  
+
+      RETURN
+	END

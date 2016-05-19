@@ -1,0 +1,109 @@
+      SUBROUTINE CALCTE
+      INCLUDE 'HEAD'
+C-----------Interior points
+	DO 10 J=2,NJM1
+	DO 10 I=2,NIM1
+C-----------Calculate Areas and Volume
+      AREAS=SWE(I)*RV(J)
+	AREAN=SWE(I)*RV(J+1)
+	AREAW=SSN(J)*RCV(J)
+	AREAE=SSN(J)*RCV(J)
+	VOL=SWE(I)*SSN(J)*RCV(J)
+C---------Calculate Convection Coefficients
+      CS=(DEN(I,J-1)*XICVS(J)+DEN(I,J)*XICVN(J))*V(I,J)*AREAS
+	CN=(DEN(I,J)*XICVS(J+1)+DEN(I,J+1)*XICVN(J+1))*V(I,J+1)*AREAN
+	CW=(DEN(I-1,J)*XICUW(I)+DEN(I,J)*XICUE(I))*U(I,J)*AREAW
+	CE=(DEN(I,J)*XICUW(I+1)+DEN(I+1,J)*XICUE(I+1))*U(I+1,J)*AREAE
+	REMASS=CN-CS+CE-CW
+C---------Calculate Diffusion Coeffients
+      VISS=(VIS(I,J-1)*XICVS(J)+VIS(I,J)*XICVN(J))/PRTE
+	VISN=(VIS(I,J)*XICVS(J+1)+VIS(I,J+1)*XICVN(J+1))/PRTE
+	VISW=(VIS(I-1,J)*XICUW(I)+VIS(I,J)*XICUE(I))/PRTE
+	VISE=(VIS(I,J)*XICUW(I+1)+VIS(I+1,J)*XICUE(I+1))/PRTE
+	DS=VISS*AREAS/DYSP(J)+1E-30
+	DN=VISN*AREAN/DYPN(J)+1E-30
+	DW=VISW*AREAW/DXWP(I)+1E-30
+	DE=VISE*AREAE/DXPE(I)+1E-30
+C---------Calculate the Peclet Number
+      PS=CS/DS
+	PN=CN/DN
+	PW=CW/DW
+	PE=CE/DE
+C---------ASSEMBLE MAIN COEFFICIENTS
+      AS(I,J)=DS*AMAX1(0.,(1.-.1*ABS(PS))**5)+AMAX1(CS,0.)
+	AN(I,J)=DN*AMAX1(0.,(1.-.1*ABS(PN))**5)+AMAX1(-CN,.0)
+	AW(I,J)=DW*AMAX1(0.,(1.-.1*ABS(PW))**5)+AMAX1(CW,0.)
+	AE(I,J)=DE*AMAX1(0.,(1.-.1*ABS(PE))**5)+AMAX1(-CE,.0)
+c     AS(I,J)=AMAX1(ABS(0.5*CS),DS)+0.5*CS
+c	AN(I,J)=AMAX1(ABS(0.5*CN),DN)-0.5*CN
+c	AW(I,J)=AMAX1(ABS(0.5*CW),DW)+0.5*CW
+c	AE(I,J)=AMAX1(ABS(0.5*CE),DE)-0.5*CE
+      IF(REMASS.LE.0.0)THEN
+	SP(I,J)=0.0
+	SU(I,J)=-REMASS*TE(I,J)
+	ELSE
+	SP(I,J)=-REMASS
+	SU(I,J)=0.0
+	END IF
+C---------Calculate The Source
+      SP(I,J)=SP(I,J)-DEN(I,J)*ED(I,J)/(TE(I,J)+1E-30)*VOL
+	UCS=U(I,J-1)*XICCW(I)+U(I+1,J-1)*XICCE(I)
+	UCP=U(I,J)*XICCW(I)+U(I+1,J)*XICCE(I)
+	UCN=U(I,J+1)*XICCW(I)+U(I+1,J+1)*XICCE(I)
+	USS=UCS*XICVS(J)+UCP*XICVN(J)
+	USN=UCP*XICVS(J+1)+UCN*XICVN(J+1)
+C-------DUDX--DUDY--DUDZ----DUDX--DUDY--DUDZ----DUDX--DUDY--DUDZ--
+	DUDX=(U(I+1,J)-U(I,J))/SWE(I)
+	DUDY=(USN-USS)/SSN(J)
+C-------DUDX--DUDY--DUDZ----DUDX--DUDY--DUDZ----DUDX--DUDY--DUDZ--	
+	VCW=V(I-1,J)*XICCS(J)+V(I-1,J+1)*XICCN(J)
+	VCP=V(I,J)*XICCS(J)+V(I,J+1)*XICCN(J)
+	VCE=V(I+1,J)*XICCS(J)+V(I+1,J+1)*XICCN(J)
+	VSW=VCW*XICUW(I)+VCP*XICUE(I)
+	VSE=VCP*XICUW(I+1)+VCE*XICUE(I+1)
+C-------DVDX--DVDY--DWDZ----DVDX--DVDY--DWDZ----DVDX--DVDY--DWDZ--
+	DVDX=(VSE-VSW)/SWE(I)
+	DVDY=(V(I,J+1)-V(I,J))/SSN(J)
+C-------DVDX--DVDY--DVDZ----DVDX--DVDY--DVDZ----DVDX--DVDY--DVDZ--	
+      IF(INDCOS.EQ.1)THEN
+	GENT(I,J)=2.0*(DUDX**2+DVDY**2)+(DUDY+DVDX)**2
+      ELSE
+	GENT(I,J)=2.0*(DUDX**2+DVDY**2+
+     1     ((V(I,J)*XICCS(J)+V(I,J+1)*XICCN(J))/Y(J))**2)
+     1     +(DUDY+DVDX)**2
+      END IF
+	SU(I,J)=SU(I,J)+
+     1  CMU*DEN(I,J)*TE(I,J)**2/(ED(I,J)+1E-30)*GENT(I,J)*VOL
+10    CONTINUE
+C---------Problem Modification
+      CALL PRMOD(4)
+C---------Residual Source Calculation
+      RESORK=0.0
+      DO 20 J=2,NJM1
+	DO 20 I=2,NIM1
+	AP(I,J)=AN(I,J)+AS(I,J)+AW(I,J)+AE(I,J)-SP(I,J)	
+	RESOR=AS(I,J)*TE(I,J-1)+AN(I,J)*TE(I,J+1)+
+     1      AW(I,J)*TE(I-1,J)+AE(I,J)*TE(I+1,J)+
+     1      SU(I,J)-AP(I,J)*TE(I,J)
+      IF(ABS(SP(I,J)).GE.1E25)RESOR=0.0
+      RESORK=RESORK+ABS(RESOR)                	
+20    CONTINUE
+C---------Under-Relaxation
+	DO 30 J=2,NJM1
+	DO 30 I=2,NIM1
+	AP(I,J)=AP(I,J)/URFK
+      SU(I,J)=SU(I,J)+(1.-URFK)*AP(I,J)*TE(I,J)
+30    CONTINUE
+C---------Solution of Difference Equation
+      DO 50 N=1,NSWPK
+	CALL LISOLV(2,NIM1,2,NJM1,IT,JT,TE,1)
+50    CONTINUE
+      DO 1110 I=1,NI
+	TE(I,1)=TE(I,2)
+1110	CONTINUE
+      DO 1120 J=1,NJ
+	TE(NI,J)=TE(NIM1,J)
+1120  CONTINUE	
+C**********30/10
+      RETURN
+	END

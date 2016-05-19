@@ -1,0 +1,4 @@
+稳态导热程序可见Heat_Conduction_2D_steady文件夹，非稳态导热程序可见Heat_Conduction_2D_unsteady文件夹。
+两者只有boundary.f90中a_P0和main.f90中循环结构的微小差别，可放在一个程序中。但为了对比清楚，放在两个不同的程序中。
+
+该程序是在Intel Fortran 2011环境下编写，程序说明可见二维稳态及非稳态问题导热研究.docx及程序中详细注释。

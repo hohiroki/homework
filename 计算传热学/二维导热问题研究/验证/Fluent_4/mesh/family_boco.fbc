@@ -1,0 +1,18 @@
+# family_boco file written by ICEM HEXA
+"GEOM"
+"GEOM" "color" 16663900
+"SOLID"
+"SOLID" "color" 3403390
+"W"
+"W" "WALL" 0
+"W" "color" 16663900
+"S"
+"S" "WALL" 0
+"S" "color" 16663900
+"E"
+"E" "WALL" 0
+"E" "color" 16663900
+"N"
+"N" "WALL" 0
+"N" "color" 16663900
+"CREATED_FACES"

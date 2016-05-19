@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{f95216be-48bb-40f8-8229-7fa55c3fae3e}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{87b1bd2e-b86b-42e6-9013-467c6f195e6c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{92325c5c-f2af-44b8-b198-c5bd276fc2f5}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Common.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="evaluate.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Exact.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="func.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="grid.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Output.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Solver.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="work1_2dim.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

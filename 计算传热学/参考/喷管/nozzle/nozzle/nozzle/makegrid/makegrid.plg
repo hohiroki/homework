@@ -1,0 +1,26 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: makegrid - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\shenz06\LOCALS~1\Temp\RSP66.tmp" with contents
+[
+/check:bounds /compile_only /dbglibs /debug:full /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB" 
+"D:\personal data\project\FortrantrnProjects\CFD\for xuyunchao\DM\makegrid\main.f90"
+]
+Creating command line "link.exe kernel32.lib /nologo /subsystem:console /incremental:no /pdb:"Debug/makegrid.pdb" /debug /machine:I386 /out:"Debug/makegrid.exe" /pdbtype:sept  ".\Debug\main.obj" "
+<h3>Output Window</h3>
+Compiling Fortran...
+D:\personal data\project\FortrantrnProjects\CFD\for xuyunchao\DM\makegrid\main.f90
+Linking...
+
+
+
+<h3>Results</h3>
+makegrid.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

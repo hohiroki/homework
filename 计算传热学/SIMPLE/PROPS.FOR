@@ -1,0 +1,15 @@
+      SUBROUTINE PROPS
+	INCLUDE 'HEAD'
+C---------Turbulent Viscosity 	
+	DO 10 J=1,NJM1
+	DO 10 I=1,NI
+	VISOLD=VIS(I,J)
+	IF(ED(I,J).LE.1E-25)GOTO 20
+	VIS(I,J)=DEN(I,J)*CMU*TE(I,J)**2/ED(I,J)+VSLL(I,J)
+	GOTO 30
+20    VIS(I,J)=VSLL(I,J)
+C---------Under-Relax Viscosity
+30    VIS(I,J)=URFVIS*VIS(I,J)+(1.-URFVIS)*VISOLD	
+10    CONTINUE
+      RETURN
+	END

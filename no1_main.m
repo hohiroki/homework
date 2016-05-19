@@ -1,7 +1,7 @@
 clear all;
 clc;
+format long;
 %general contral
-format long
 delta_max = 1e-8;
 step_max = 1000;
 
@@ -16,8 +16,8 @@ xgrid_num = 200;
 ygrid_num = 200;
 dx_averge = Lx/xgrid_num;
 dy_averge = Ly/ygrid_num;
-x_min = dx_averge/20;
-y_min = dy_averge/40;
+x_min = dx_averge/10;
+y_min = dy_averge/20;
 Lx_min = Lx*0.2;
 Ly_min = Ly*0.3;
 x_min_grid = xgrid_num*0.4;
@@ -65,6 +65,10 @@ v0 = v;
 delta = 1;
 step = 0;
 
+    %add visual point
+dy_grid2=[dy_grid,dy_grid(ygrid_num)];
+dx_grid2=[dx_grid,dx_grid(ygrid_num)];
+
 %pE&mE
 while delta>delta_max&&step<step_max
     step = step+1;
@@ -73,12 +77,14 @@ while delta>delta_max&&step<step_max
     %boundary
     u(1,:) = U;
     v(1,:) = 0;
-    u(:,ygrid_num+1) = U;
     u(:,1) = 0;
     v(:,1) = 0;
-    %add visual point
-    dy_grid2=[dy_grid,dy_grid(ygrid_num)];
-    dx_grid2=[dx_grid,dx_grid(ygrid_num)];
+    aE2=u;
+    aW2 = u;
+    aN2 = u; 
+    aS2 = u;
+    aP2 = u;
+    
     %for upwind
     for i=2:1:xgrid_num
         for j=2:1:ygrid_num
@@ -107,25 +113,39 @@ while delta>delta_max&&step<step_max
             aS = Ds*Bs*dx;
             aP = aE+aW+aN+aS+(Fe-Fw)*dy+(Fn-Fs)*dx;
             u(i,j)=(aE*u(i+1,j)+aW*u(i-1,j)+aN*u(i,j+1)+aS*u(i,j-1))/aP;
-            %u(i,j)=(aW*u(i-1,j)+aS*u(i,j-1))/aP;
-            
-            %mE solve v:dy*(Fe-Fw)+dx*(Fn-Fs)=0;
+            %u(i,j)=(mu*((u(i,j+1)-u(i-1,j+1))/dx_grid2(i)-(u(i,j-1)-u(i-1,j-1))/dx_grid2(i))*dx+Fs*u(i,j-1)*dx+Fw*u(i-1,j)*dy)/(Fe*dy+Fn*dx);
+            %v方向速度，连续方程给出
             v(i,j) = v(i,j-1)-dy*(u(i,j)-u(i-1,j))/dx;
+            
+            aE2(i,j)=aE;
+            aW2(i,j) = aW;
+            aN2(i,j) = aN; 
+            aS2(i,j) = aS;
+            aP2(i,j) = aP;
         end
     end
-    %at x=xgrid_num+1;  
+    %at x=xgrid_num+1;
+        %充分发展
     u(xgrid_num+1,:)=u(xgrid_num,:);
-    %v(xgrid_num+1,:) = v(xgrid_num,:);
+    
     %at y=ygrid_num+1
-    for i = 2:1:xgrid_num+1
-        v(i,ygrid_num+1) = ((1-u(i,:)/U)*dy_grid2'-(1-u(i-1,:)/U)*dy_grid2')/dx_grid(i-1);
-    end
-    
-%     v(:,ygrid_num+1)=1;
-%     v(xgrid_num+1,:)=1;
-    
-      
+        %无速度梯度
+    v(:,ygrid_num+1)=v(:,ygrid_num);
+        %排挤速度
+%     for i = 2:1:xgrid_num+1
+%         v(i,ygrid_num+1) = ((1-u(i,:)/U)*dy_grid2'-(1-u(i-1,:)/U)*dy_grid2')/dx_grid(i-1);
+%        
+%     end
+        %连续方程
+%     for i = 2:1:xgrid_num+1
+%           dx = (dx_grid2(i)+dx_grid2(i-1))/2;
+%           dy = (dy_grid2(xgrid_num+1)+dy_grid2(xgrid_num))/2;
+%         v(i,ygrid_num+1) =  v(i,ygrid_num)-dy*(u(i,ygrid_num+1)-u(i-1,ygrid_num+1))/dx; 
+%     end         
     delta = max(max(abs(u-u0)))/U+max(max(abs(v-v0)))/U
+    if(step == 2) 
+        break
+    end
 end
 %
 if step==step_max

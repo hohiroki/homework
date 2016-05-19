@@ -1,0 +1,12 @@
+"GEOM"
+"SOLID"
+"W"
+"W" "WALL" 0
+"S"
+"S" "WALL" 0
+"E"
+"E" "WALL" 0
+"N"
+"N" "WALL" 0
+"MT1"
+"VORFN"

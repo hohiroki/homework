@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{21bc2f37-535a-4e6e-aa0d-d157493ad7c5}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp</Extensions>
+    </Filter>
+    <Filter Include="input">
+      <UniqueIdentifier>{f1ff7235-4b17-4af8-9152-29edc118520c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{901f23de-219f-4913-8ac4-b6c8a4b7d975}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{c3ed3b7c-ef0d-4a31-8202-f34aa8c0643a}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="addin.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="boundarycondition.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Euler.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="flowfield.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="geometry.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="initialization.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="module.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="output.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="solver.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="weno2d.f90">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Euler.in">
+      <Filter>input</Filter>
+    </CustomBuild>
+    <CustomBuild Include="grid.in">
+      <Filter>input</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

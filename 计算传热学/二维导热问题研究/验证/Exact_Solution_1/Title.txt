@@ -1,0 +1,3 @@
+title="2D heat conduction problem"
+variables="x","y","T"
+zone i=101, j=101, f=point
