@@ -61,13 +61,13 @@ for i = xnum1+xnum2+1:1:xnum
     end
 end
 %画网格图
-% for j=1:1:ynum    
-%    plot(X(:,j),Y(:,j));hold on; 
-% end
-% for i = 1:1:xnum
-%     plot(X(i,:),Y(i,:));hold on;
-% end
-% box off;
+for j=1:1:ynum    
+   plot(X(:,j),Y(:,j));hold on; 
+end
+for i = 1:1:xnum
+    plot(X(i,:),Y(i,:));hold on;
+end
+box off;
 %计算部分
 dt = 1/(xnum*ynum*10);
 gama = 1.26;
