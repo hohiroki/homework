@@ -16,7 +16,7 @@ Uref = (Pref/Rouref)^0.5;
 Lref = 5e-3;
 eps = 1;
 epsmax = 1e-6;
-dt = 1/(xnum*ynum*10);
+dt = 1/(xnum*ynum);
 %入口无穷远条件
 Main = 0.4357;
 Tin = T0/(1+(gama-1)/2*Main^2); %静温
@@ -34,8 +34,8 @@ S_unit = pin_unit/(rouin_unit)^gama;%无量纲商
 %初始化
 rou_init = ones(xnum,ynum)*rouin_unit;
 p_init = ones(xnum,ynum)*pin_unit;
-u_init = ones(xnum,ynum)*0;
-v_init = ones(xnum,ynum)*0;
+u_init = ones(xnum,ynum)*uin_unit*0.5;
+v_init = ones(xnum,ynum)*uin_unit*0.01;
 E_init = ones(xnum,ynum)*Ein_unit;
 H_init = ones(xnum,ynum)*Hin_unit;
 a_init = (gama*p_init./rou_init).^0.5;
@@ -48,6 +48,7 @@ E = E_init;
 H = H_init;
 a = (gama*p./rou).^0.5;
 rou_n = rou;
+p_n = p;
 u_n = u;
 v_n = v;
 E_n = E;
@@ -62,13 +63,13 @@ for time = 0:dt:1
         break
     end
     step =step+1;
-    if step ==4
+    if step ==5
         break
     end
     %入口条件计算
     u(1,:) = (uin_unit-2*ain_unit*ex/(gama-1)+u(2,:)+2*a(2,:)/(gama-1))/2;
     v(1,:) = 0;
-    a(1,:) = (u(2,:)+2*a(2,:)/(gama-1)-uin_unit*ey+2*ain_unit*ey/(gama-1))*(gama-1)/4;
+    a(1,:) = (u(2,:)+2*a(2,:)/(gama-1)-uin_unit*ex+2*ain_unit*ex/(gama-1))*(gama-1)/4;
     rou(1,:) = ((a(1,:).^2/gama/S_unit)).^(1/(gama-1));
     p(1,:) = rou(1,:).*a(1,:).^2/gama;
     E(1,:) = p(1,:)/(gama-1)./rou(1,:)+0.5*u(1,:).^2;  
@@ -89,7 +90,7 @@ for time = 0:dt:1
         u(i,ynum) = u(i,ynum-1)*ny^2-v(i,ynum-1)*nx*ny;
         v(i,ynum) = -u(i,ynum-1)*nx*ny+v(i,ynum-1)*nx^2;
         a_temp = (p(i,ynum-1)/rou(i,ynum-1))^0.5;
-        rou(i,ynum) = ((gama-1)^2*(u(i,ynum-1)*nx+v(i,ynum-1)*ny-2*a_temp/(gama-1))^2*rou(i,ynum-1)^gama/4/gama/p(i,2))^(1/(gama-1));
+        rou(i,ynum) = ((gama-1)^2*(u(i,ynum-1)*nx+v(i,ynum-1)*ny-2*a_temp/(gama-1))^2*rou(i,ynum-1)^gama/4/gama/p(i,ynum-1))^(1/(gama-1));
         p(i,ynum) = p(i,ynum-1)*rou(i,ynum)^gama/rou(i,ynum-1)^gama;
         E(i,ynum) = p(i,ynum)/(gama-1)/rou(i,ynum)+0.5*u(i,ynum)^2;  
         H(i,ynum) = E(i,ynum)+p(i,ynum)/rou(i,ynum);
@@ -98,65 +99,62 @@ for time = 0:dt:1
     for i = 2:1:xnum-1
         for j = 2:1:ynum-1
             %界面面积
-            area = getArea([X(i-1,j),X(i,j-1),X(i+1,j),X(i,j+1)],[Y(i-1,j),Y(i,j-1),Y(i+1,j),Y(i,j+1)]);
+            area = getArea([X(i-1,j),X(i,j-1),X(i+1,j),X(i,j+1)],[Y(i-1,j),Y(i,j-1),Y(i+1,j),Y(i,j+1)])/Lref/Lref;
+            %界面角点坐标
+            x1=(X(i,j)+X(i+1,j)+X(i+1,j+1)+X(i,j+1))/4;
+            y1=(Y(i,j)+Y(i+1,j)+Y(i+1,j+1)+Y(i,j+1))/4;
+            x2=(X(i,j)+X(i-1,j)+X(i-1,j+1)+X(i,j+1))/4;
+            y2=(Y(i,j)+Y(i-1,j)+Y(i-1,j+1)+Y(i,j+1))/4;
+            x3=(X(i,j)+X(i,j-1)+X(i-1,j-1)+X(i-1,j))/4;
+            y3=(Y(i,j)+Y(i,j-1)+Y(i-1,j-1)+Y(i-1,j))/4;
+            x4=(X(i,j)+X(i,j-1)+X(i+1,j-1)+X(i+1,j))/4;
+            y4=(Y(i,j)+Y(i,j-1)+Y(i+1,j-1)+Y(i+1,j))/4;
             %界面通量计算
             %i+1/2,j处通量
-            x_temp_v = [(X(i,j)+X(i+1,j)+X(i+1,j+1)+X(i,j+1))/4,(X(i,j)+X(i,j-1)+X(i+1,j-1)+X(i+1,j))/4];
-            y_temp_v = [(Y(i,j)+Y(i+1,j)+Y(i+1,j+1)+Y(i,j+1))/4,(Y(i,j)+Y(i,j-1)+Y(i+1,j-1)+Y(i+1,j))/4];
-            dl = ((x_tempv(1)-x_tempv(0))^2+(y_tempv(1)-y_tempv(0))^2)^0.5;
-            [nx,ny] = getnxny(x_temp_v,y_temp_v);
+            x_temp_v = [x1,x4];
+            y_temp_v = [y1,y4];
+            dlE = ((x_temp_v(2)-x_temp_v(1))^2+(y_temp_v(2)-y_temp_v(1))^2)^0.5/Lref;
+            [nxE,nyE] = getnxny(x_temp_v,y_temp_v);
             %密度加权量
-            rouL = sqrt(rou_n(i,j));
-            rouR = sqrt(rou_n(i+1,j)); 
-            rouE=rouL*rouR;
-            uE=(u_n(i,j)*rouL+u_n(i+1,j)*rouR)/(rouL+rouR);
-            vE=(v_n(i,j)*rouL+v_n(i+1,j)*rouR)/(rouL+rouR);
-            HE=(H_n(i,j)*rouL+H_n(i+1,j)*rouR)/(rouL+rouR);
-            aE = ((gama-1)*(HE-0.5*(uE^2+vE^2)))^0.5;
-            pE=(HE-0.5*(uE^2+vE^2))*rouE*(gama-1)/gama;
- 
+            [rouE,uE,vE,HE,aE,pE]=get_WRou(rou_n,u_n,v_n,H_n,i,j,i+1,j);
+            [F_E,G_E] = get_FGrebuilt(rou_n,u_n,v_n,H_n,p_n,rouE,uE,vE,HE,aE,i,j,i+1,j);      
+            H_passE=(nxE*F_E+nyE*G_E)*dlE;        
             
-            FL=[rou(i,j)*u(i,j),rou(i,j)*u(i,j)^2+p(i,j),rou(i,j)*u(i,j)*v(i,j),rou(i,j)*u(i,j)*H(i,j)]';
-            FR=[rou(i+1,j)*u(i+1,j),rou(i+1,j)*u(i+1,j)^2+p(i+1,j),rou(i+1,j)*u(i+1,j)*v(i+1,j),rou(i+1,j)*u(i+1,j)*H(i+1,j)]';
-            GL = [rou(i,j)*v(i,j),rou(i,j)*u(i,j)*v(i,j),rou(i,j)*v(i,j)^2+p(i,j),rou(i,j)*v(i,j)*H(i,j)]';
-            GR = [rou(i+1,j)*v(i+1,j),rou(i+1,j)*u(i+1,j)*v(i+1,j),rou(i+1,j)*v(i+1,j)^2+p(i+1,j),rou(i+1,j)*v(i+1,j)*H(i+1,j)]';
-            F_langta = abs([uE-aE,uE,uE,uE+aE]);
-            G_langta = abs([vE-aE,vE,vE,vE+aE]);
-            F_afa = [(p(i+1,j)-p(i,j)-rouE*aE*(u(i+1,j)-u(i,j)))/2/aE^2,rou(i+1,j)-rou(i,j)-(p(i+1,j)-p(i,j))/aE^2,rouE*(v(i+1,j)-v(i,j)),(p(i+1,j)-p(i,j)+rouE*aE*(u(i+1,j)-u(i,j)))/2/aE^2];
-            F_E = 0.5*(FL+FR)-0.5* 
+            %i-1/2,j处通量
+            x_temp_v = [x3,x2];
+            y_temp_v = [y3,y2];
+            dlW = ((x_temp_v(2)-x_temp_v(1))^2+(y_temp_v(2)-y_temp_v(1))^2)^0.5/Lref;
+            [nxW,nyW] = getnxny(x_temp_v,y_temp_v);
+            [rouW,uW,vW,HW,aW,pW]=get_WRou(rou_n,u_n,v_n,H_n,i-1,j,i,j);
+            [F_W,G_W] = get_FGrebuilt(rou_n,u_n,v_n,H_n,p_n,rouW,uW,vW,HW,aW,i-1,j,i,j);      
+            H_passW=(nxW*F_W+nyW*G_W)*dlW;
             
+            %i,j-1/2处通量
+            x_temp_v = [x4,x3];
+            y_temp_v = [y4,y3];
+            dlS = ((x_temp_v(2)-x_temp_v(1))^2+(y_temp_v(2)-y_temp_v(1))^2)^0.5/Lref;
+            [nxS,nyS] = getnxny(x_temp_v,y_temp_v);
+            [rouS,uS,vS,HS,aS,pS]=get_WRou(rou_n,u_n,v_n,H_n,i,j-1,i,j);
+            [F_S,G_S] = get_FGrebuilt(rou_n,u_n,v_n,H_n,p_n,rouS,uS,vS,HS,aS,i,j-1,i,j);      
+            H_passS=(nxS*F_S+nyS*G_S)*dlS;
             
-            rouL = sqrt(rou_n(i,j));
-            rouR = sqrt(rou_n(i+1,j)); 
-            rouE=rouL*rouR;
-            uE=(u_n(i,j)*rouL+u_n(i+1,j)*rouR)/(rouL+rouR);
-            vE=(v_n(i,j)*rouL+v_n(i+1,j)*rouR)/(rouL+rouR);
-            HE=(H_n(i,j)*rouL+H_n(i+1,j)*rouR)/(rouL+rouR);
-            pE=(HE-0.5*(uE^2+vE^2))*rouE*(gama-1)/gama;
-                       
-            rouL = sqrt(rou_n(i,j-1));
-            rouR = sqrt(rou_n(i,j)); 
-            rouS=rouL*rouR;
-            uS=(u_n(i,j-1)*rouL+u_n(i,j)*rouR)/(rouL+rouR);
-            vS=(v_n(i,j-1)*rouL+v_n(i,j)*rouR)/(rouL+rouR);
-            HS=(H_n(i,j-1)*rouL+H_n(i,j)*rouR)/(rouL+rouR);
-            pS=(HS-0.5*(uS^2+vS^2))*rouS*(gama-1)/gama;
-            
-            rouL = sqrt(rou_n(i,j));
-            rouR = sqrt(rou_n(i,j+1)); 
-            rouN=rouL*rouR;
-            uN=(u_n(i,j)*rouL+u_n(i,j+1)*rouR)/(rouL+rouR);
-            vN=(v_n(i,j)*rouL+v_n(i,j+1)*rouR)/(rouL+rouR);
-            HN=(H_n(i,j)*rouL+H_n(i,j+1)*rouR)/(rouL+rouR);
-            pN=(HN-0.5*(uN^2+vN^2))*rouN*(gama-1)/gama;
+            %i,j+1/2处通量
+            x_temp_v = [x2,x1];
+            y_temp_v = [y2,y1];
+            dlN = ((x_temp_v(2)-x_temp_v(1))^2+(y_temp_v(2)-y_temp_v(1))^2)^0.5/Lref;
+            [nxN,nyN] = getnxny(x_temp_v,y_temp_v);
+            [rouN,uN,vN,HN,aN,pN]=get_WRou(rou_n,u_n,v_n,H_n,i,j,i,j+1);
+            [F_N,G_N] = get_FGrebuilt(rou_n,u_n,v_n,H_n,p_n,rouN,uN,vN,HN,aN,i,j,i,j+1);      
+            H_passN=(nxN*F_N+nyN*G_N)*dlN;
             
             %一阶时间离散
-            rou(i,j) = rou_n(i,j)-(rouE*uE-rouW*uW)/dx*dt-(rouN*vN-rouS*vS)/dy*dt;
-            u(i,j) = (rou_n(i,j)*u_n(i,j)-(rouE*uE^2+pE-rouW*uW^2-pW)/dx*dt-(rouN*uN*vN-rouS*uS*vS)/dy*dt)/max(rou(i,j),1e-4);
-            v(i,j) = (rou_n(i,j)*v_n(i,j)-(rouE*uE*vE-rouW*uW*vE)/dx*dt-(rouN*vN^2+pN-rouS*vS^2-pS)/dy*dt)/max(rou(i,j),1e-4);
-            E(i,j) = (rou_n(i,j)*E_n(i,j)-(rouE*uE*HE-rouW*uW*HW)/dx*dt-(rouN*vN*HN-rouS*vS*HS)/dy*dt)/max(rou(i,j),1e-4);
+            du_dt = dt*(H_passW+H_passE+H_passN+H_passS)/area;
+            rou(i,j) = max(rou_n(i,j)-du_dt(1),1e-4);
+            u(i,j) = (u_n(i,j)*rou_n(i,j)-du_dt(2))/du_dt(1);
+            v(i,j) = (v_n(i,j)*rou_n(i,j)-du_dt(3))/du_dt(1);
+            E(i,j) = (E_n(i,j)*rou_n(i,j)-du_dt(4))/du_dt(1);
             p(i,j) = (E(i,j)-0.5*(u(i,j)^2+v(i,j)^2))*rou(i,j)*(gama-1);
-            H(i,j) = E(i,j)+p(i,j)/max(rou(i,j),1e-4);            
+            H(i,j) = E(i,j)+p(i,j)/rou(i,j);            
             
         end
     end
@@ -164,7 +162,7 @@ for time = 0:dt:1
     u(xnum,:) = u(xnum-1,:);v(xnum,:) = v(xnum-1,:);a(xnum,:) = a(xnum-1,:);rou(xnum,:) = rou(xnum-1,:);
     p(xnum,:) = p(xnum-1,:);E(xnum,:) = E(xnum-1,:);H(xnum,:) = H(xnum-1,:);
     %残差
-    eps = max([norm(u-u_n,1)/norm(u,1),norm(v-v_n,1)/norm(v,1),norm(rou-rou_n,1)/norm(rou,1),norm(p-p_n,1)/norm(p,1)])
+    eps = max([norm(u-u_n,1)/norm(u,1),norm(v-v_n,1)/norm(v,1),norm(rou-rou_n,1)/norm(rou,1),norm(E-E_n,1)/norm(E,1)])
     %存储
     rou_n = rou;
     u_n = u;
@@ -172,6 +170,7 @@ for time = 0:dt:1
     E_n = E;
     H_n = H;
     a_n = a;
+    p_n = p;
 end
 if eps<epsmax
     disp('done!');
