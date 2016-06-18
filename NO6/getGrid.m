@@ -16,11 +16,11 @@ Lx = Ld+(Rb-Rt)/tan(afa)+L;
 Ly = 2*Rout;
 %画网格
 %x方向分为3部分
-xnum1 = 10; %入口段
-xnum2 = 20; %收缩段
-xnum3 = 60; %扩张段
+xnum1 = 4; %入口段
+xnum2 = 7; %收缩段
+xnum3 = 15; %扩张段
 xnum = xnum1+xnum2+xnum3;
-ynum = 30;
+ynum = 8;
 X = ones(xnum,ynum);
 Y = ones(xnum,ynum);
 for i = 1:1:xnum1
