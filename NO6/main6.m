@@ -63,7 +63,7 @@ for time = 0:dt:1
         break
     end
     step =step+1;
-    if step ==5
+    if step ==20
         break
     end
     %入口条件计算
