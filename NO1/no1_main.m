@@ -2,7 +2,7 @@ clear all;
 clc;
 %format long;
 %general contral
-delta_max = 1e-8;
+delta_max = 1e-5;
 step_max = 600;
 
 %boudary setting
