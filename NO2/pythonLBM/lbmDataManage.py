@@ -45,9 +45,9 @@ class DataManage(object):
         x = np.linspace(0,1,self.NX+1)
         y = np.linspace(0,1,self.NX+1)
         X,Y=np.meshgrid(x,y)
-        pl.streamplot(X,Y,self.u.transpose(),self.v.transpose(),color=self.u, linewidth=1)
+        pl.streamplot(X,Y,self.u.transpose(),self.v.transpose(),color=self.u*0, linewidth=1)
         pl.axis([0,1,0,1])
-        pl.colorbar()
+        #pl.colorbar()
         if ff is None:
             pl.show()
         else:
@@ -55,5 +55,5 @@ class DataManage(object):
             pl.savefig(ff)
 
 if __name__ == "__main__":
-    datamanage = DataManage("pcavity_082000.dat.npy")
-    datamanage.plot_v_contour()
+    datamanage = DataManage("re1000.npy")
+    datamanage.plot_streamline()

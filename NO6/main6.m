@@ -16,7 +16,7 @@ Uref = (Pref/Rouref)^0.5;
 Lref = 5e-3;
 eps = 1;
 epsmax = 1e-6;
-dt = 1/(5);
+dt = 0.0005;
 %入口无穷远条件
 Main = 0.4357;
 Tin = T0/(1+(gama-1)/2*Main^2); %静温
@@ -33,7 +33,7 @@ Ein_unit = pin_unit/(gama-1)/rouin_unit+0.5*uin_unit^2;Hin_unit = Ein_unit+pin_u
 S_unit = pin_unit/(rouin_unit)^gama;%无量纲商
 %初始化
 rou_init = ones(xnum,ynum)*rouin_unit;
-p_init = ones(xnum,ynum)*pin_unit;
+p_init = ones(xnum,ynum)*pin_unit*1.2;
 u_init = ones(xnum,ynum)*uin_unit*0.1;
 v_init = ones(xnum,ynum)*uin_unit*0.001;
 E_init = ones(xnum,ynum)*Ein_unit;
@@ -55,17 +55,12 @@ E_n = E;
 H_n = H;
 a_n = a;
 step = 0;
+step_max=20000;
 %单位行向量
 ex = linspace(1,1,length(u(1,:)));
 ey = linspace(1,1,length(u(:,1)))';
-for time = 0:dt:10000
-    if eps<epsmax
-        break
-    end
-    step =step+1
-    if step ==20000
-        break
-    end
+while step<step_max &&eps>epsmax
+    step = step+1
     %入口条件计算
     u(1,:) = (uin_unit-2*ain_unit*ex/(gama-1)+u(2,:)+2*a(2,:)/(gama-1))/2;
     v(1,:) = 0;
@@ -76,7 +71,7 @@ for time = 0:dt:10000
     H(1,:) = E(1,:)+p(1,:)./rou(1,:);
     %壁面
     for i = 2:1:xnum-1
-        [nx,ny] = getnxny([X(i,1),X(i+1,1)],[Y(i,1),Y(i+1,1)]);
+        [nx,ny] = getnxny([X(i-1,1),X(i+1,1)],[Y(i-1,1),Y(i+1,1)]);
         u(i,1) = u(i,2)*ny^2-v(i,2)*nx*ny;
         v(i,1) = -u(i,2)*nx*ny+v(i,2)*nx^2;
         a_temp = (gama*p(i,2)/rou(i,2))^0.5;
@@ -85,7 +80,7 @@ for time = 0:dt:10000
         E(i,1) = p(i,1)/(gama-1)/rou(i,1)+0.5*u(i,1)^2;  
         H(i,1) = E(i,1)+p(i,1)/rou(i,1);
         
-        [nx,ny] = getnxny([X(i,ynum),X(i+1,ynum)],[Y(i,ynum),Y(i+1,ynum)]);
+        [nx,ny] = getnxny([X(i-1,ynum),X(i+1,ynum)],[Y(i-1,ynum),Y(i+1,ynum)]);
         nx = -1*nx;ny = -1*ny;
         u(i,ynum) = u(i,ynum-1)*ny^2-v(i,ynum-1)*nx*ny;
         v(i,ynum) = -u(i,ynum-1)*nx*ny+v(i,ynum-1)*nx^2;
@@ -148,19 +143,21 @@ for time = 0:dt:10000
             H_passN=(nxN*F_N+nyN*G_N)*dlN;
             
             %一阶时间离散
-            du_dt = dt*(H_passW+H_passE+H_passN+H_passS)/area*Lref*Lref;
+            du_dt = dt*(H_passW+H_passE+H_passN+H_passS)/area;
             rou(i,j) = rou_n(i,j)-du_dt(1);
             u(i,j) = (u_n(i,j)*rou_n(i,j)-du_dt(2))/rou(i,j);
             v(i,j) = (v_n(i,j)*rou_n(i,j)-du_dt(3))/rou(i,j);
             E(i,j) = (E_n(i,j)*rou_n(i,j)-du_dt(4))/rou(i,j);
             p(i,j) = (E(i,j)-0.5*(u(i,j)^2+v(i,j)^2))*rou(i,j)*(gama-1);
-            H(i,j) = E(i,j)+p(i,j)/rou(i,j);            
+            H(i,j) = E(i,j)+p(i,j)/rou(i,j);
             
         end
     end
     %出口直接外推
     u(xnum,:) = u(xnum-1,:);v(xnum,:) = v(xnum-1,:);a(xnum,:) = a(xnum-1,:);rou(xnum,:) = rou(xnum-1,:);
     p(xnum,:) = p(xnum-1,:);E(xnum,:) = E(xnum-1,:);H(xnum,:) = H(xnum-1,:);
+    a = (gama*p./rou).^0.5;
+    dt = 0.001/ynum/max(max(abs(a)));
     %残差
     eps = max([norm(u-u_n,1)/norm(u,1),norm(v-v_n,1)/norm(v,1),norm(rou-rou_n,1)/norm(rou,1),norm(E-E_n,1)/norm(E,1)])
     %存储

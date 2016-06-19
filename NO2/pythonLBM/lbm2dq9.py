@@ -226,7 +226,7 @@ class LBM2DQ9:
         t2 = np.sum(self.u*self.u0 + self.v*self.v0)
         return (t1/(t2+1e-50))**0.5
 
-    def run(self, Re, U=0.1, rho0=1., step=np.inf, init=False, output=False):
+    def run(self, Re, U=0.1, rho0=1., step=np.inf, filename='re1000', init=False, output=False):
         """ """
         self.U = U
         if init:
@@ -238,11 +238,14 @@ class LBM2DQ9:
             if n%100 == 0:
                 err = self.error()
                 print('%5d step: u[NX/2][NY/2] = {%.6f, %.6f}, err = %g'%(n, self.u[self.NX/2,self.NY/2], self.v[self.NX/2,self.NY/2], err))
-                if output is True and n%1000 == 0:
-                    np.save('pcavity_%06d.dat'%n, (self.u, self.v))
+
+                if output is True and n%20000 == 0:
+                    np.save('re%06d'%n, (self.u, self.v))
+
                 if err < 1e-6:
                     print('converged')
                     break
+        np.save(filename, (self.u, self.v))
         print('done.')
 
     def plot_u_contour(self, ff=None):
@@ -277,9 +280,18 @@ class LBM2DQ9:
 if __name__ == '__main__':
     import sys
     lbm = LBM2DQ9(256,256)
+    lbm.run(Re=400., filename='re400',init=True)
+    del lbm
+    lbm2 = LBM2DQ9(256,256)
+    lbm2.run(Re=2000., filename='re2000',init=True)
+    del lbm2
+    lbm3 = LBM2DQ9(256,256)
+    lbm3.run(Re=5000., filename='re5000',init=True)
+    '''
     if len(sys.argv) > 1:
         #print sys.argv[1]
         lbm.run(Re=1000., step=int(sys.argv[1]), init=True)
     else:
         lbm.run(Re=1000., init=True, output=True)
+    '''
     
