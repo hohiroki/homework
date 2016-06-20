@@ -1,14 +1,14 @@
 function [X,Y,xnum,ynum] = getGrid()
 %描述喷管形状
-Rt = 5*1e-3;
+Rt = 5*1e-3*2e2;
 Re = Rt*2^0.5;
 Rb = 1.5*Rt;
 theta = 15*pi/180;
 %自己定义一个Ld
-Ld = 2*1e-3;
+Ld = 2*1e-3*2e2;
 %afa角度与fai角度
 afa = 20*pi/180;
-fai = 60*pi/180;
+fai = 50*pi/180;
 Le = (Re-Rt)/tan(theta);
 L = (2*Rt+Le*tan(fai))/(tan(fai)-2*tan(theta));
 Rout = L*tan(theta)+Rt;
@@ -59,4 +59,5 @@ for i = xnum1+xnum2+1:1:xnum
         Y(i,j) = y;
     end
 end
+plotGrid(X,Y)
 end

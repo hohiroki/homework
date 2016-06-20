@@ -1,6 +1,5 @@
-!=====================================================================================      
-      subroutine solver(nrk)
-!     *****************
+          subroutine solver(nrk)
+
 !
       use main
 !*****************************************************************************
@@ -31,11 +30,20 @@
 !     ===========================
 
 !     evaluate the inviscid fluxes 
-      if(irsolver==0) then
-      call inviscid_fluxes_roe
-      else
-      call inviscid_fluxes_lax
-      end if
+!      if(irsolver==0) then
+!      call inviscid_fluxes_roe
+!      else
+!      call inviscid_fluxes_lax
+!      end if
+
+	  select case (irsolver)
+	  case (0) 
+	   call inviscid_fluxes_roe
+	  case (1)
+	   call inviscid_fluxes_lax
+	  case (2)
+	   call inviscid_fluxes_rtroe
+	  end select
 !     ====================  
 !      CALL CPU_TIME ( time12 )
 !*****************************************************************************

@@ -1,0 +1,8 @@
+        !COMPILER-GENERATED INTERFACE MODULE: Mon Jun 20 17:36:08 2016
+        MODULE SOLVER__genmod
+          INTERFACE 
+            SUBROUTINE SOLVER(NRK)
+              INTEGER(KIND=4) :: NRK
+            END SUBROUTINE SOLVER
+          END INTERFACE 
+        END MODULE SOLVER__genmod

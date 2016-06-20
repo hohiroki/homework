@@ -1,17 +1,9 @@
-!==================================================================!
-!======= 2d Euler solver ==========!
-!==================================================================!
-!                  V 1.0 by REN Yuxin, Oct. 12, 2007
-!==================================================================!
-!
-!
+!    2D Euler equation
+
       program Euler
-     !======================
      
+      use main
 
-     use main
-
-!
       open (2,file='Euler.his',status='unknown')
 !     bl.his:file that store the computation history
       
@@ -21,13 +13,15 @@
       write(*,*) '1'
 !
       call startup
-      
+      call outputuns
+
       write(*,*) '2'
+! 	  write(*,*) maxval(maxval(vy))
+! 	  write(*,*) maxval(maxval(vx))
 !
 !     start of main iteration loop
 !     ----------------------------
 !
-      
       iend=0
 !     if iend==1, the computation stops
       
@@ -51,7 +45,7 @@
       end if
       if(n.eq.nmax) iend=1
       
-      ip=0.
+!      ip=0.
       if(mod(n,iprint).eq.0) ip=1
       
 !     compute time step
@@ -125,11 +119,12 @@
           write(*,*) rsm2,imax2,jmax2
           write(*,*) rsm3,imax3,jmax3
           write(*,*) rsm4,imax4,jmax4
-        
+          write(*,*) rtflk
           write(2,*) rsm1,imax1,jmax1
           write(2,*) rsm2,imax2,jmax2
           write(2,*) rsm3,imax3,jmax3
           write(2,*) rsm4,imax4,jmax4
+		  write(2,*) rtflk
       end if
       
       do i=ib,im
@@ -149,15 +144,9 @@
 !     ==============
 !
       if(iend.eq.1) then
-      close (2)
-      write(*,*) 'Normal Termination'
-  
-      write(*,*) time2-time1
-      stop
+          close (2)
+          write(*,*) 'Normal Termination'
+          stop
       endif
-      goto 100
+        goto 100
       end
-!
-!     end of main loop
-!     ----------------
-!
