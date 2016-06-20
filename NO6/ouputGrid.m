@@ -1,5 +1,5 @@
 function ouputGrid(X,Y,xnum,ynum)
-fid=fopen('grid.in','wt');
+fid=fopen('grid4060.in','wt');
 fprintf(fid,'%i',xnum-1);
 fprintf(fid,'    ');
 fprintf(fid,'%i',ynum-1);
