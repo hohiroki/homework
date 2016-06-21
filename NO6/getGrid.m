@@ -5,10 +5,10 @@ Re = Rt*2^0.5;
 Rb = 1.5*Rt;
 theta = 15*pi/180;
 %自己定义一个Ld
-Ld = 2*1e-3*2e2;
+Ld = 5*1e-3*2e2;
 %afa角度与fai角度
-afa = 40*pi/180;
-fai = 80*pi/180;
+afa = 60*pi/180;
+fai = 60*pi/180;
 Le = (Re-Rt)/tan(theta);
 L = 2*Rt+Le*tan(fai)/(tan(fai)-2*tan(theta));
 Rout = L*tan(theta)+Rt;
@@ -16,11 +16,11 @@ Lx = Ld+(Rb-Rt)/tan(afa)+L;
 Ly = 2*Rout;
 %画网格
 %x方向分为3部分
-xnum1 = 6; %入口段
-xnum2 = 14; %收缩段
-xnum3 = 35; %扩张段
+xnum1 = 45; %入口段
+xnum2 = 20; %收缩段
+xnum3 = 85; %扩张段
 xnum = xnum1+xnum2+xnum3;
-ynum = 12;
+ynum = 50;
 X = ones(xnum,ynum);
 Y = ones(xnum,ynum);
 for i = 1:1:xnum1

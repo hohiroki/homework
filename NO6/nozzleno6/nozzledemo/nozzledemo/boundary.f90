@@ -18,7 +18,7 @@
 
       !暂时用滞止条件  ma=0.4357 u=462.7784/
       i=ib-1
-	 machleft=0.4357
+	 machleft=0.2724
 
      
 	  pinleft=p0/(1.0+ga1/2*machleft**2)**rfga

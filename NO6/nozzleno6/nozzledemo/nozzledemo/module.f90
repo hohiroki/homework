@@ -7,10 +7,8 @@
 !      the height of inlet /throat and outlet
 	  parameter(hi=1.5,ht=1.0,hb=2.0)
 !	  parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*2.0/12.0)
-!       parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*3.0/12.0)  
-       parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*4.0/12.0)  
-!        parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*5.0/12.0)  
-!    parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*6.0/12.0)  
+       parameter(alpha=pi*3.0/9.0,theta=pi/12.0,phi=pi*4.0/12.0)  
+!        parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*4.0/9.0)  
 
       real :: eps    
       logical :: steady1

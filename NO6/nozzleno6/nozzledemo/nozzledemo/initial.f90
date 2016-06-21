@@ -48,7 +48,7 @@
 !     read grids 
 !     ----------
 !
-        open (5,file='grid.in',status='unknown')
+        open (5,file='grid6060.in',status='unknown')
         read(5,*) imc,jmc
         ib=3
         jb=3
