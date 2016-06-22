@@ -3,7 +3,7 @@ clc;
 %format long;
 %general contral
 delta_max = 1e-5;
-step_max = 800;
+step_max = 1800;
 
 %boudary setting
 U = 0.002;
@@ -33,12 +33,6 @@ for i=2:1:ygrid_num+1
     y_grid(i) =  y_grid(i-1)+dy_grid(i-1);
 end
 %%%%%-------%%%%%%%%
-%show grid
-% [X,Y] = meshgrid(x_grid,y_grid);
-% Z = X.*0;
-% surf(X,Y,Z);
-
-%caculation
 %initial
 u=ones(xgrid_num+1,ygrid_num+1)*U;
 v=zeros(xgrid_num+1,ygrid_num+1);
@@ -48,9 +42,9 @@ delta = 1;
 step = 0;
 
 %%%%%
-k = u.*u*0.002;
-e = 0.095*k.^1.5*Cmu^0.75/0.095/0.42;
-mut = Cmu*k.*k./e;
+k = u.*0;
+e =k.*0;
+mut = k.*0;
 u0 = u;
 v0 = v;
 k0=k;
@@ -66,6 +60,9 @@ while delta>delta_max&&step<step_max
     step = step+1;
     u0 = u;
     v0 = v;
+    k0=k;
+    e0=e;
+    mut0 = mut;
     
     %boundary
     u(1,:) = U;
@@ -73,23 +70,13 @@ while delta>delta_max&&step<step_max
     u(:,1) = 0;
     v(:,1) = 0;
     %%%%%%
-    k(1,:) = U*U*0.002;
-    e(1,:) = 0.095*k(1,:).^1.5*Cmu^0.75/0.095/0.42;
+    k(1,4:10) = U*U*0.002;
+    e(1,4:10) = 2*k(1,4:10).^1.5*Cmu^0.75/0.095/0.42;
     u(:,1) = 0;
     v(:,1) = 0;
     k(:,1) = 0;
-    e(:,1) = 0;
-    k0=k;
-    e0=e;
-    mut0 = mut;
-    %%%%%%
-    aE2=u;
-    aW2 = u;
-    aN2 = u; 
-    aS2 = u;
-    aP2 = u;
-    
-    %for upwind
+    e(:,1) = 0; 
+    %u
     for i=2:1:xgrid_num
         for j=2:1:ygrid_num
             Fe = rou*(u(i,j)+u(i+1,j))/2;
@@ -120,28 +107,22 @@ while delta>delta_max&&step<step_max
             aS = Ds*Bs*dx;
             aP = aE+aW+aN+aS+(Fe-Fw)*dy+(Fn-Fs)*dx;
             u(i,j)=(aE*u(i+1,j)+aW*u(i-1,j)+aN*u(i,j+1)+aS*u(i,j-1))/aP;         
-            aE2(i,j)=aE;
-            aW2(i,j) = aW;
-            aN2(i,j) = aN; 
-            aS2(i,j) = aS;
-            aP2(i,j) = aP;
         end
     end
     %v方向速度，连续方程给出
+    u(xgrid_num+1,:)=u(xgrid_num,:);
+    u(:,ygrid_num+1)=u(:,ygrid_num);
     for i=2:1:xgrid_num
         for j=2:1:ygrid_num
             v(i,j+1) = v(i,j-1)-dy*(u(i+1,j)-u(i-1,j))/dx;
         end
     end
     %at x=xgrid_num+1;
-        %充分发展
-    u(xgrid_num+1,:)=u(xgrid_num,:);
     v(xgrid_num+1,:)=v(xgrid_num,:);
     %at y=ygrid_num+1
-        %无速度梯度
     v(:,ygrid_num+1)=v(:,ygrid_num);
-    u(:,ygrid_num+1)=u(:,ygrid_num);
-    %%%%%
+
+    %%%%%k
     for i=2:1:xgrid_num
         for j=2:1:ygrid_num
             Fe = rou*(u(i,j)+u(i+1,j))/2;
@@ -178,7 +159,23 @@ while delta>delta_max&&step<step_max
             
             aP_k = aE+aW+aN+aS+(Fe-Fw)*dy+(Fn-Fs)*dx-Sp_k*dx*dy;
             k(i,j) = (aE*k(i+1,j)+aW*k(i-1,j)+aN*k(i,j+1)+aS*k(i,j-1)+Sc_k*dx*dy)/aP_k;
-            %E PE
+                       
+        end
+    end
+    k(xgrid_num+1,:)=k(xgrid_num,:);
+    k(:,ygrid_num+1)=k(:,ygrid_num);
+%%%%% e
+    for i=2:1:xgrid_num
+        for j=2:1:ygrid_num
+            Fe = rou*(u(i,j)+u(i+1,j))/2;
+            Fw = rou*(u(i-1,j)+u(i,j))/2;
+            Fn = rou*(v(i,j)+v(i,j+1))/2;
+            Fs = rou*(v(i,j-1)+v(i,j))/2;
+            dx = (dx_grid2(i)+dx_grid2(i-1))/2.0;
+            dy = (dy_grid2(j)+dy_grid2(j-1))/2.0;
+                        
+            G = rou*mut(i,j)*(2*(u(i,j)-u(i-1,j))^2/dx^2+2*(v(i,j)-v(i-1,j))^2/dy^2+...
+            ((u(i,j)-u(i-1,j))/dx+(v(i,j)-v(i-1,j))/dy)^2);
             Dn = (mu+mut(i,j)/oe)/dy_grid2(j);
             Ds = (mu+mut(i,j)/oe)/dy_grid2(j-1);
             Pn = Fn/Dn;
@@ -192,22 +189,23 @@ while delta>delta_max&&step<step_max
             aW = max([Fw,0])*dy;
             aN = Dn*An*dx; 
             aS = Ds*Bs*dx;
-            Sc_e = Ce1*G*e0(i,j)/k0(i,j);
-            Sp_e = -rou*Ce2*e0(i,j)/k0(i,j);
+            Sc_e = Ce1*G*e0(i,j)/k(i,j);
+            Sp_e = -rou*Ce2*e0(i,j)/k(i,j);
             aP_e = aE+aW+aN+aS+(Fe-Fw)*dy+(Fn-Fs)*dx-Sp_e*dx*dy;
-            e(i,j) = (aE*k(i+1,j)+aW*k(i-1,j)+aN*k(i,j+1)+aS*k(i,j-1)+Sc_e*dx*dy)/aP_e;
-                       
+            e(i,j) = (aE*e(i+1,j)+aW*e(i-1,j)+aN*e(i,j+1)+aS*e(i,j-1)+Sc_e*dx*dy)/aP_e;                  
         end
     end
-
-
-    %at x=xgrid_num+1;
-    k(xgrid_num+1,:)=k(xgrid_num,:);
     e(xgrid_num+1,:)=e(xgrid_num,:);
-    %at y=ygrid_num+1
-    k(:,ygrid_num+1)=k(:,ygrid_num);
     e(:,ygrid_num+1)=e(:,ygrid_num);
-    mut(2:1:xgrid_num+1,2:1:ygrid_num+1) = Cmu*k(2:1:xgrid_num+1,2:1:ygrid_num+1).^2./e(2:1:xgrid_num+1,2:1:ygrid_num+1);
+    for i=1:1:xgrid_num+1
+        for j=1:1:ygrid_num+1
+            if k(i,j)==0||e(i,j)==0
+                mut(i,j) =0;
+            else
+                mut(i,j)= Cmu*k(i,j)^2./e(i,j);
+            end
+        end
+    end
     %%%%%
         
     delta = max(max(abs(u(2:xgrid_num,2:ygrid_num)-u0(2:xgrid_num,2:ygrid_num))))/U+max(max(abs(v(2:xgrid_num,2:ygrid_num)-v0(2:xgrid_num,2:ygrid_num))))/U
@@ -217,27 +215,14 @@ if step==step_max
     disp('step over maxstep');
     disp(delta);
     result = 1;
-    return
     
-else
-    disp('done,delta=');
-    disp(double(delta));
-    result = [u,v];
-    save 'data.mat';
-    [X,Y] = meshgrid(x_grid,y_grid);
-    contourf(X,Y,u',15);
-    shading flat;
+% else
+%     disp('done,delta=');
+%     disp(double(delta));
+%     result = [u,v];
+%     save 'data.mat';
+%     [X,Y] = meshgrid(x_grid,y_grid);
+%     contourf(X,Y,u',15);
+%     shading flat;
 end
 
-% function A = get_A_up(P)
-% A = 1;
-% end
-% function A = get_A_exp(P)
-% A = abs(P)/(exp(abs(P))-1);
-% end
-% function A= get_A_mix(P)
-% A = max([0,1-0.5*abs(P)]);
-% end
-% function A = get_A_eq(P)
-% A = max([0,(1-0.1*abs(P))^5]);
-% end

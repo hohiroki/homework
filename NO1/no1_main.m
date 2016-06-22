@@ -3,53 +3,18 @@ clc;
 %format long;
 %general contral
 delta_max = 1e-5;
-step_max = 600;
+step_max = 1200;
 
 %boudary setting
 U = 0.002;
 Lx = 0.5;
 Ly = 0.1;
-mu = 0.001;
+mu = 0.001003;
 rou = 998;
 %girid setting
 xgrid_num = 100;
 ygrid_num = 100;
-% dx_averge = Lx/xgrid_num;
-% dy_averge = Ly/ygrid_num;
-% x_min = dx_averge/10;
-% y_min = dy_averge/20;
-% Lx_min = Lx*0.2;
-% Ly_min = Ly*0.3;
-% x_min_grid = xgrid_num*0.4;
-% y_min_grid = ygrid_num*0.8;
-% 
-% dx_normal = (Lx-Lx_min)/(xgrid_num-x_min_grid);
-% dy_normal = (Ly-Ly_min)/(ygrid_num-y_min_grid);
-% x_ratio = (dx_normal/x_min)^(1/(x_min_grid-1));
-% y_ratio = (dy_normal/y_min)^(1/(y_min_grid-1));
-% 
-% dx_grid = linspace(1,1,xgrid_num)*dx_normal;
-% dy_grid = linspace(1,1,ygrid_num)*dy_normal;
-% 
-% x_grid = linspace(0,0,xgrid_num+1);
-% y_grid = linspace(0,0,ygrid_num+1);
-% 
-% dx_grid(1) = x_min;
-% dy_grid(1) = y_min;
-% for i =2:1:x_min_grid
-%     dx_grid(i) = x_min * x_ratio^(i - 1);
-%     x_grid(i) = x_grid(i-1)+dx_grid(i-1);
-% end
-% for i =x_min_grid+1:1:xgrid_num+1
-%     x_grid(i) = x_grid(i-1)+dx_grid(i-1);
-% end
-% for i =2:1:y_min_grid
-%     dy_grid(i) = y_min * y_ratio^(i - 1);
-%     y_grid(i) = y_grid(i-1)+dy_grid(i-1);
-% end
-% for i =y_min_grid+1:1:ygrid_num+1
-%     y_grid(i) = y_grid(i-1)+dy_grid(i-1);
-% end
+
 %%%%%-------%%%%%%
 dx_grid = linspace(1,1,xgrid_num+1)*Lx/xgrid_num;
 dy_grid = linspace(1,1,ygrid_num+1)*Ly/ygrid_num;
@@ -136,6 +101,8 @@ while delta>delta_max&&step<step_max
             aP2(i,j) = aP;
         end
     end
+    u(xgrid_num+1,:)=u(xgrid_num,:);
+    u(:,ygrid_num+1)=u(:,ygrid_num);
     %v方向速度，连续方程给出
     for i=2:1:xgrid_num
         for j=2:1:ygrid_num
@@ -144,12 +111,11 @@ while delta>delta_max&&step<step_max
     end
     %at x=xgrid_num+1;
         %充分发展
-    u(xgrid_num+1,:)=u(xgrid_num,:);
+
     v(xgrid_num+1,:)=v(xgrid_num,:);
     %at y=ygrid_num+1
         %无速度梯度
     v(:,ygrid_num+1)=v(:,ygrid_num);
-    u(:,ygrid_num+1)=u(:,ygrid_num);
         %排挤速度
 %     for i = 2:1:xgrid_num+1
 %         v(i,ygrid_num+1) = ((1-u(i,:)/U)*dy_grid2'-(1-u(i-1,:)/U)*dy_grid2')/dx_grid(i-1);
@@ -174,10 +140,17 @@ else
     disp('done,delta=');
     disp(double(delta));
     result = [u,v];
-    save 'data.mat';
+    save 'data1_004.mat';
     [X,Y] = meshgrid(x_grid,y_grid);
     contourf(X,Y,u',15);
+    axis equal
+    set(gca,'XLim',[0 0.5]);
+    set(gca,'YLim',[0 0.1]);
+    set(gca,'XTick',[0:0.05:0.5]);
+    set(gca,'YTick',[0:0.025:0.1]);
     shading flat;
+    hcb=colorbar;
+    set(hcb,'ytick',[0:0.0004:0.002]);
 end
 
 % function A = get_A_up(P)
