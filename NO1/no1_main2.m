@@ -71,12 +71,12 @@ while delta>delta_max&&step<step_max
     u(:,1) = 0;
     v(:,1) = 0;
     %%%%%%
-    k(1,:) = U*U*0.0002;
-    e(1,:) = 0*k(1,:).^1.5*Cmu^0.75/0.095/0.42;
+    k(1,:) = U*U*0.002;
+    e(1,:) = 2*k(1,:).^1.5*Cmu^0.75/0.095/0.42;
     u(:,1) = 0;
     v(:,1) = 0;
     k(:,1) = 0;
-    e(:,1) = 0; 
+    e(:,1) = 0;
     %u
     for i=2:1:xgrid_num
         for j=2:1:ygrid_num
@@ -133,15 +133,10 @@ while delta>delta_max&&step<step_max
             dx = (dx_grid2(i)+dx_grid2(i-1))/2.0;
             dy = (dy_grid2(j)+dy_grid2(j-1))/2.0;
                         
-            aE = max([-Fe,0])*dy;
-            aW = max([Fw,0])*dy;
-            aN = Dn*An*dx; 
-            aS = Ds*Bs*dx;
-            aP = aE+aW+aN+aS+(Fe-Fw)*dy+(Fn-Fs)*dx;
             %k PE
             G = rou*mut(i,j)*(2*(u(i,j)-u(i-1,j))^2/dx^2+2*(v(i,j)-v(i-1,j))^2/dy^2+...
             ((u(i,j)-u(i-1,j))/dx+(v(i,j)-v(i-1,j))/dy)^2);
-            Sc_k = G-mu*e(i,j)+k0(i,j);
+            Sc_k = G-mu*e0(i,j)+k0(i,j);
             Sp_k = -1;
             
             Dn = (mu+mut(i,j)/ok)/dy_grid2(j);

@@ -50,11 +50,15 @@
 !              vjrg=vywnj(2,i,j)
 !              pjrg= pwnj(2,i,j)
                                                                       
-             write(30,*) xcar,ycar&
-     &                  ,ucar,vcar&
-     &                  ,pcar,rcar,amach,entr,vmur 
+!             write(30,*) xcar,ycar&
+ !    &                  ,ucar,vcar&
+  !   &                  ,pcar,rcar,amach,entr,vmur 
 !      &                  ,rjlg,ujlg,vjlg,pjlg &
 !      &                  ,rjrg,ujrg,vjrg,pjrg
+
+                write(30,*) xc(i,j),y(i,j)&
+         &                  ,vx(i,j),vy(i,j)&
+         &                  ,p(i,j),ro(i,j),amach,entr,vmur 
            end do
            end do
            close(30)

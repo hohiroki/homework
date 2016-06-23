@@ -48,7 +48,7 @@
 !     read grids 
 !     ----------
 !
-        open (5,file='grid6060.in',status='unknown')
+        open (5,file='grid2060.in',status='unknown')
         read(5,*) imc,jmc
         ib=3
         jb=3
@@ -153,7 +153,7 @@
    if (phi==pi/2.0) then
    lx=lm
    else
-    lx=lm+4.0/(tan(phi)-tan(theta))
+    lx=lm+2.0*hb/(tan(phi)-tan(theta))
    end if
 !
 !

@@ -6,8 +6,21 @@
 	  parameter( pi=3.1415926535897932384626)
 !      the height of inlet /throat and outlet
 	  parameter(hi=1.5,ht=1.0,hb=2.0)
+      
+       !2030
+      !parameter(alpha=pi*1.0/9.0,theta=pi/12.0,phi=pi*1.0/6.0) 
+      !2060
+      parameter(alpha=pi*1.0/9.0,theta=pi/12.0,phi=pi*1.0/3.0)
+      !2080
+      !parameter(alpha=pi*1.0/9.0,theta=pi/12.0,phi=pi*4.0/9.0)
+      !4060
+      !parameter(alpha=pi*2.0/9.0,theta=pi/12.0,phi=pi*1.0/3.0)
+      !6060
+      !parameter(alpha=pi*1.0/3.0,theta=pi/12.0,phi=pi*1.0/3.0)
+
+      
 !	  parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*2.0/12.0)
-       parameter(alpha=pi*3.0/9.0,theta=pi/12.0,phi=pi*4.0/12.0)  
+ !      parameter(alpha=pi*3.0/9.0,theta=pi/12.0,phi=pi*4.0/12.0)  
 !        parameter(alpha=pi/9.0,theta=pi/12.0,phi=pi*4.0/9.0)  
 
       real :: eps    
