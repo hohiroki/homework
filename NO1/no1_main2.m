@@ -66,12 +66,13 @@ while delta>delta_max&&step<step_max
     
     %boundary
     u(1,:) = U;
+    u(1,2) = U*0.8;
     v(1,:) = 0;
     u(:,1) = 0;
     v(:,1) = 0;
     %%%%%%
-    k(1,4:10) = U*U*0.002;
-    e(1,4:10) = 2*k(1,4:10).^1.5*Cmu^0.75/0.095/0.42;
+    k(1,:) = U*U*0.0002;
+    e(1,:) = 0*k(1,:).^1.5*Cmu^0.75/0.095/0.42;
     u(:,1) = 0;
     v(:,1) = 0;
     k(:,1) = 0;
@@ -89,11 +90,11 @@ while delta>delta_max&&step<step_max
             Pn = Fn/Dn;
             Ps = Fs/Ds;
             
-            %An = 1+max([-Pn,0]);
-            %As = 1+max([-Ps,0]);
-            As = max([0,1-0.5*abs(Ps)]);
+            An = 1+max([-Pn,0]);
+            As = 1+max([-Ps,0]);
+            %As = max([0,1-0.5*abs(Ps)]);
             Bs = As+Ps;
-            An = max([0,1-0.5*abs(Pn)]);
+            %An = max([0,1-0.5*abs(Pn)]);
             
             
             dx = (dx_grid2(i)+dx_grid2(i-1))/2.0;
@@ -148,9 +149,11 @@ while delta>delta_max&&step<step_max
             Pn = Fn/Dn;
             Ps = Fs/Ds;
             
-            As = max([0,1-0.5*abs(Ps)]);
+            An = 1+max([-Pn,0]);
+            As = 1+max([-Ps,0]);
+            %As = max([0,1-0.5*abs(Ps)]);
             Bs = As+Ps;
-            An = max([0,1-0.5*abs(Pn)]);
+            %An = max([0,1-0.5*abs(Pn)]);
                         
             aE = max([-Fe,0])*dy;
             aW = max([Fw,0])*dy;
@@ -181,9 +184,11 @@ while delta>delta_max&&step<step_max
             Pn = Fn/Dn;
             Ps = Fs/Ds;
             
-            As = max([0,1-0.5*abs(Ps)]);
+            An = 1+max([-Pn,0]);
+            As = 1+max([-Ps,0]);
+            %As = max([0,1-0.5*abs(Ps)]);
             Bs = As+Ps;
-            An = max([0,1-0.5*abs(Pn)]);
+            %An = max([0,1-0.5*abs(Pn)]);
                         
             aE = max([-Fe,0])*dy;
             aW = max([Fw,0])*dy;

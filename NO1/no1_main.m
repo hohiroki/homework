@@ -78,9 +78,14 @@ while delta>delta_max&&step<step_max
             
             %An = 1+max([-Pn,0]);
             %As = 1+max([-Ps,0]);
-            As = max([0,1-0.5*abs(Ps)]);
+            %An = abs(Pn)/(exp(abs(Pn))-1)+max([-Pn,0]);
+            %As = abs(Ps)/(exp(abs(Ps))-1)+max([-Ps,0]);
+            %As = max([0,1-0.5*abs(Ps)])+max([-Ps,0]);
+            %An = max([0,1-0.5*abs(Pn)])+max([-Pn,0]);
+            As = max([0,(1-0.1*abs(Ps))^5])+max([-Ps,0]);
+            An = max([0,(1-0.1*abs(Pn))^5])+max([-Pn,0]);
             Bs = As+Ps;
-            An = max([0,1-0.5*abs(Pn)]);
+            
             
             
             dx = (dx_grid2(i)+dx_grid2(i-1))/2.0;
@@ -140,7 +145,7 @@ else
     disp('done,delta=');
     disp(double(delta));
     result = [u,v];
-    save 'data1_004.mat';
+    save 'data1_002_eps.mat';
     [X,Y] = meshgrid(x_grid,y_grid);
     contourf(X,Y,u',15);
     axis equal
